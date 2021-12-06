@@ -36,7 +36,7 @@ def base64_to_image(base64_string):
 
 
 def checkin(userId):
-    url = "https://0407-42-117-179-248.ngrok.io/api/v1/checkin"
+    url = "https://dut-timetrackingapp.herokuapp.com/api/v1/checkin"
 
     payload = json.dumps({
         "groupId": "6150b5c637cef39b11366cc8",
@@ -46,8 +46,7 @@ def checkin(userId):
         'Content-Type': 'application/json',
     }
     response = requests.request("POST", url, headers=headers, data=payload)
-
-    print(response.text)
+    return response.text
 
 
 def main():
@@ -134,12 +133,17 @@ def main():
                         best_class_indices = np.argmax(predictions, axis=1)
                         best_class_probabilities = predictions[
                             np.arange(len(best_class_indices)), best_class_indices]
-
+                        best_name = ""
+                        if(best_class_probabilities < 0.5):
+                            best_name = "Unknown"
+                        else:
+                            best_name = class_names[best_class_indices[0]]
                         # Lay ra ten va ty le % cua class co ty le cao nhat
-                        best_name = class_names[best_class_indices[0]]
                         print("Name: {}, Probability: {}".format(
                             best_name, best_class_probabilities))
-                        checkin(best_name)
+                        if(best_name != "Unknown"):
+                            checkin(best_name)
+                        print(best_name)
             except:
                 pass
 
